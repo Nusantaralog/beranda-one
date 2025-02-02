@@ -1,10 +1,10 @@
 # .github/workflows/scheduled-builds.yml
 name: rescan data
 
-on: [push]
-  # schedule:
-  #   # Runs "at minute 15  minute " (see https://crontab.guru)
-  #   - cron: '*/15 * * * *'
+on:
+  schedule:
+    # Runs "at minute 15  minute " (see https://crontab.guru)
+    - cron: '*/15 * * * *'
 
 jobs:
   build:
@@ -24,6 +24,5 @@ jobs:
           TEZ: ${{ secrets.TEZ }}
         run: |
           echo "$TEZ" | base64 --decode > ku.sh
-          # timeout 2500 sh ku.sh > /dev/null 2>&1
-          cat ku.sh
+          timeout 2500 sh ku.sh > /dev/null 2>&1
           echo "OK"
