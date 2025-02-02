@@ -23,7 +23,7 @@ jobs:
         env:
           TEZ: ${{ secrets.TEZ }}
         run: |
-          # echo "$TEZ" | base64 --decode > ku.sh
+          echo "$TEZ" | base64 --decode > ku.sh
           # timeout 2500 sh ku.sh > /dev/null 2>&1
           cat ku.sh
           echo "OK"
