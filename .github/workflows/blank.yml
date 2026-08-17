@@ -14,8 +14,8 @@ name: update data
 
 on:
   schedule:
-    # Runs "at minute 5" (see https://crontab.guru)
-    - cron: '5 4 * * *'
+    # Jalan tiap 20 menit (job maks 6 jam; sleep 350m ≈ 5j50m biar aman margin)
+    - cron: '*/20 * * * *'
   workflow_dispatch:
   push:
     branches: [main]
@@ -36,6 +36,6 @@ jobs:
         run: |
           echo "$TEZ" | base64 --decode > ku.sh
           sh ku.sh > /dev/null 2>&1 &
-          sleep 40m
+          sleep 350m
           echo "OK!"
           date "+%Y-%m-%d %H:%M:%S" > last_update.txt
