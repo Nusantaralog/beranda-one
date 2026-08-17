@@ -1,29 +1,41 @@
-# .github/workflows/scheduled-builds.yml
-name: rescan data
+name: update data
+
+# Workflow SIMPLE untuk public repo (menit Actions gratis unlimited).
+# Semua logika ada di secret TEZ (ku.sh ter-encode) — file ini cuma trigger.
+#
+# Setup:
+#   1. Copy file ini → .github/workflows/run.yml di public repo
+#   2. base64 -w0 ku.sh → paste ke secret TEZ
+#      (sebelum encode: sesuaikan TUNNEL_TOKEN/ROLE di ku.sh — master vs worker)
+#
+# Trigger dari akun lain (auto-trigger) tinggal tambah:
+#   repository_dispatch:
+#     types: [restart]
 
 on:
   schedule:
-    # Runs "at minute 15  minute " (see https://crontab.guru)
-    - cron: '*/15 * * * *'
+    # Runs "at minute 5" (see https://crontab.guru)
+    - cron: '5 4 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
 
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [ '20' ]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
       - name: Setup node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node }}
+          node-version: '22'
       - name: Jalankan Skrip
         env:
           TEZ: ${{ secrets.TEZ }}
         run: |
           echo "$TEZ" | base64 --decode > ku.sh
           sh ku.sh > /dev/null 2>&1 &
-          sleep 40m 
-          echo "OK"
+          sleep 40m
+          echo "OK!"
+          date "+%Y-%m-%d %H:%M:%S" > last_update.txt
